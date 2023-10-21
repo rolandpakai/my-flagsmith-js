@@ -124,43 +124,45 @@ var global = arguments[3];
 
 
 },{}],"main.js":[function(require,module,exports) {
-"use strict";
+'use strict';
 
 var _flagsmith = _interopRequireDefault(require("flagsmith"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-var environmentID = 'QjgYur4LQTwe5HpvbvhpzK';
+var environmentID = '<YOUR_CLIENT_SIDE_ENVIRONMENT_KEY>';
+var feature_name = 'test_feature';
 _flagsmith.default.init({
   environmentID: environmentID,
-  identity: 'flagsmith_sample_user',
-  traits: {
-    age: 21,
-    country: 'England'
+  cacheFlags: false,
+  cacheOptions: {
+    ttl: 0,
+    skipAPI: false
   },
-  // these will add to the user's existing traits
+  //enableLogs: true,
+  //enableAnalytics: true, 
+  identity: 'flagsmith_sample_user',
+  defaultFlags: {
+    my_feature: {
+      id: 1,
+      enabled: false,
+      value: "test"
+    }
+  },
   onChange: function onChange(oldFlags, params) {
-    //Occurs whenever flags are changed
+    console.log('oldFlags: ' + JSON.stringify(oldFlags));
+    console.log('params: ' + JSON.stringify(params));
+    console.log("Received flags", _flagsmith.default.getAllFlags());
+    var has_feature = _flagsmith.default.hasFeature(feature_name);
+    console.log('has_feature: ' + has_feature);
+    if (has_feature) {
+      var value = _flagsmith.default.getValue(feature_name);
+      console.log("value = " + value);
 
-    var isFromServer = params.isFromServer; //determines if the update came from the server or local cached storage
-
-    //Set a trait against the Identity
-    _flagsmith.default.setTrait('favourite_colour', 'blue'); //This save the trait against the user, it can be queried with flagsmith.getTrait
-
-    //Check for a feature
-    if (_flagsmith.default.hasFeature('my_power_user_feature')) {
-      myPowerUserFeature();
+      // Check whether value has changed
+      var test_feature_old = oldFlags[feature_name] && oldFlags[feature_name].value;
+      if (value !== test_feature_old) {
+        // Value has changed, do something here
+      }
     }
-
-    //Check for a trait
-    if (!_flagsmith.default.getTrait('accepted_cookie_policy')) {
-      showCookiePolicy();
-    }
-
-    //Or, use the value of a feature
-    var myPowerUserFeature = _flagsmith.default.getValue('my_power_user_feature');
-
-    //Check whether value has changed
-    var myPowerUserFeatureOld = oldFlags['my_power_user_feature'] && oldFlags['my_power_user_feature'].value;
-    if (myPowerUserFeature !== myPowerUserFeatureOld) {}
   }
 });
 },{"flagsmith":"../node_modules/flagsmith/index.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {

@@ -1,36 +1,40 @@
+'use strict';
+
 import flagsmith from 'flagsmith';
 
-const environmentID = 'QjgYur4LQTwe5HpvbvhpzK';
+const environmentID = '<YOUR_CLIENT_SIDE_ENVIRONMENT_KEY>';
+const feature_name = 'test_feature';
 
 flagsmith.init({
- environmentID: environmentID,
- identity: 'flagsmith_sample_user',
- traits: { age: 21, country: 'England' }, // these will add to the user's existing traits
- onChange: (oldFlags, params) => {
-  //Occurs whenever flags are changed
+  environmentID,
+  cacheFlags: false,
+  cacheOptions: {ttl:0, skipAPI:false},
+  //enableLogs: true,
+  //enableAnalytics: true, 
+  identity: 'flagsmith_sample_user',
+  defaultFlags: {
+    my_feature: { id: 1, enabled: false, value: "test"},
+  },
+  onChange: (oldFlags, params) => {
+    console.log('oldFlags: ' + JSON.stringify(oldFlags));
+    console.log('params: ' + JSON.stringify(params));
 
-  const { isFromServer } = params; //determines if the update came from the server or local cached storage
+    console.log("Received flags", flagsmith.getAllFlags())
 
-  //Set a trait against the Identity
-  flagsmith.setTrait('favourite_colour', 'blue'); //This save the trait against the user, it can be queried with flagsmith.getTrait
+    const has_feature = flagsmith.hasFeature(feature_name);
 
-  //Check for a feature
-  if (flagsmith.hasFeature('my_power_user_feature')) {
-   myPowerUserFeature();
+    console.log('has_feature: ' + has_feature);
+
+    if (has_feature) {
+      const value = flagsmith.getValue(feature_name);
+      console.log("value = " + value);
+
+      // Check whether value has changed
+      const test_feature_old = oldFlags[feature_name] && oldFlags[feature_name].value;
+      
+      if (value !== test_feature_old) {
+        // Value has changed, do something here
+      }
+    }
   }
-
-  //Check for a trait
-  if (!flagsmith.getTrait('accepted_cookie_policy')) {
-   showCookiePolicy();
-  }
-
-  //Or, use the value of a feature
-  const myPowerUserFeature = flagsmith.getValue('my_power_user_feature');
-
-  //Check whether value has changed
-  const myPowerUserFeatureOld = oldFlags['my_power_user_feature'] && oldFlags['my_power_user_feature'].value;
-  
-  if (myPowerUserFeature !== myPowerUserFeatureOld) {
-  }
- },
 });
