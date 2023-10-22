@@ -2,11 +2,23 @@
   "extends": "airbnb-base",
   "env": {
     "browser": true,
+    "commonjs": true,
+    "es2021": true,
     "es6": true,
+    "jest": true,
+    "node": true,
     "worker": true
   },
+  "plugins": ["import"],
   "parserOptions": {
     "ecmaVersion": 10,
-    "sourceType": "script"
+    "sourceType": "module"
+  },
+  "rules": {
+    "import/no-extraneous-dependencies": [
+      "error", {
+         "devDependencies": true
+      }
+    ]
   }
 }
