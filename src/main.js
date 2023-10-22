@@ -2,24 +2,22 @@
 
 import flagsmith from 'flagsmith';
 
-const environmentID = '<YOUR_CLIENT_SIDE_ENVIRONMENT_KEY>';
+const environmentID = 'DCYBQgBcuRF86fmvgZc2os';
 const feature_name = 'test_feature';
 
 flagsmith.init({
   environmentID,
   cacheFlags: false,
-  cacheOptions: {ttl:0, skipAPI:false},
+  //cacheOptions: {ttl:2, skipAPI:false},
   //enableLogs: true,
   //enableAnalytics: true, 
   identity: 'flagsmith_sample_user',
-  defaultFlags: {
-    my_feature: { id: 1, enabled: false, value: "test"},
-  },
   onChange: (oldFlags, params) => {
     console.log('oldFlags: ' + JSON.stringify(oldFlags));
     console.log('params: ' + JSON.stringify(params));
 
-    console.log("Received flags", flagsmith.getAllFlags())
+    const flags = flagsmith.getAllFlags();
+    console.log("Received flags", flags)
 
     const has_feature = flagsmith.hasFeature(feature_name);
 
@@ -30,9 +28,9 @@ flagsmith.init({
       console.log("value = " + value);
 
       // Check whether value has changed
-      const test_feature_old = oldFlags[feature_name] && oldFlags[feature_name].value;
+      const value_old = oldFlags[feature_name] && oldFlags[feature_name].value;
       
-      if (value !== test_feature_old) {
+      if (value !== value_old) {
         // Value has changed, do something here
       }
     }
